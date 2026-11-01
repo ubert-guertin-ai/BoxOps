@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./Boxops.png" alt="BoxOps logo" width="160">
+  <img src="./Boxops.png" alt="BoxOps logo" width="400">
 </p>
 
 # BoxOps
