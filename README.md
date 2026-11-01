@@ -1,23 +1,57 @@
-![BoxOPS logo](./Boxops.png)
+<p align="center">
+  <img src="./Boxops.png" alt="BoxOps logo" width="160">
+</p>
+
 # BoxOps
 
-Minimalist backoffice and AI-powered assistant for managing IKEA-style furniture catalogs, inventory, and product specifications.
+A minimalist backoffice with an AI-powered assistant for managing IKEA-style furniture catalogs, inventory, and product specifications.
 
-## Tech Stack
-
-- **Backend:** Django, Python, LangGraph, Pydantic, ChromaDB, SQLite
-- **Frontend:** React, TailwindCSS, Vite
-- **Deployment:** Docker & Docker Compose
+> **Status:** under active development.
 
 ---
 
 ## Features
 
-- **Product Management Dashboard:** Full CRUD operations to add, modify, or remove furniture items.
-- **Hybrid AI Chatbot Assistant:**
-  - **Structured Data (SQL):** Automatically executes tool-calling `SELECT` queries for direct facts (prices, designer, names, brief descriptions).
-  - **Unstructured Knowledge (RAG):** Performs similarity searches via ChromaDB for complex, fuzzy queries (e.g., maximum weight capacity, assembly tips).
-- **Real-Time UI Feedback:** Transparent workflow states displayed in the UI (*Searching database...*, *Querying RAG...*, *Compiling results...*, *Errors*).
+- **Product management dashboard**: full CRUD to add, edit, and remove furniture items.
+- **Hybrid AI assistant**: a chatbot that picks the right source for each question.
+  - **Structured data (SQL):** the agent calls tools that query the database for direct facts such as prices, designers, names, and short descriptions.
+  - **Unstructured knowledge (RAG):** similarity search through ChromaDB for fuzzy or detailed questions, such as maximum weight capacity or assembly tips.
+- **Real-time UI feedback:** the interface shows what the assistant is doing at each step (*Searching database...*, *Querying RAG...*, *Compiling results...*) and surfaces errors clearly.
+
+---
+
+## Tech Stack
+
+| Layer | Technologies |
+|---|---|
+| Backend | Django, Python, LangGraph, Pydantic |
+| Data | SQLite (structured data), ChromaDB (vector search) |
+| Frontend | React, Vite, TailwindCSS |
+| Deployment | Docker, Docker Compose |
+
+---
+
+## How the assistant works
+
+The assistant is a [LangGraph](https://langchain-ai.github.io/langgraph/) agent that loops between the model and its tools until it can answer:
+
+```text
+User question
+     │
+     ▼
+   agent ──► needs a tool? ──yes──► tools (SQL / RAG) ──┐
+     ▲                                                  │
+     └──────────────────────────────────────────────────┘
+     │ no
+     ▼
+  Final answer
+```
+
+- The **SQL tool** answers precise questions about catalog data.
+- The **RAG tool** answers questions that depend on long or descriptive product content.
+- The agent decides which tool to use, and can use both for a single question.
+- Each step is streamed to the frontend, which is how the UI displays live progress.
+- The loop is bounded by a maximum number of turns, so the agent can never run indefinitely.
 
 ---
 
@@ -31,27 +65,49 @@ boxops/
 ├── frontend/
 │   ├── Dockerfile
 │   └── ...
+├── .env.example
 └── docker-compose.yml
 ```
 
 ---
 
-## Getting Started (Production Mode with Docker)
+## Getting Started
 
-Make sure you have Docker and Docker Compose installed on your machine.
+### Prerequisites
 
-1. Clone the repository
-```
+- [Docker](https://docs.docker.com/get-docker/) with Docker Compose
+- An Anthropic API key
+
+### 1. Clone the repository
+
+```bash
 git clone https://github.com/ubert-guertin/boxops.git
+cd boxops
 ```
 
-2. Run the application using Docker Compose
-```
-docker-up --build
+### 2. Configure the environment
+
+```bash
+cp .env.example .env
 ```
 
-3. Access the services
+Then open `.env` and set your API key:
+
+```text
+ANTHROPIC_API_KEY=your_key_here
 ```
-Frontend Dashboard: http://localhost:3000
-Backend API: http://localhost:8000
+
+### 3. Build and run
+
+```bash
+docker compose up --build
 ```
+
+### 4. Open the app
+
+| Service | URL |
+|---|---|
+| Frontend dashboard | http://localhost:3000 |
+| Backend API | http://localhost:8000 |
+
+To stop the application, press `Ctrl+C`, then run `docker compose down`.
