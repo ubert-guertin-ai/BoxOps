@@ -1,3 +1,4 @@
+![BoxOPS logo](./Boxops)
 # BoxOps
 
 Minimalist backoffice and AI-powered assistant for managing IKEA-style furniture catalogs, inventory, and product specifications.
