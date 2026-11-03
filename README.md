@@ -26,7 +26,7 @@ A minimalist backoffice with an AI-powered assistant for managing IKEA-style fur
 |---|---|
 | Backend | Django (Headless with DjangoRestFramework), Python, LangGraph, LangChain |
 | Data | PosgresSQL (With `pgvector` extension) |
-| Frontend | React, Vite, TailwindCSS, Typescript |
+| Frontend | React (React Router), Vite, TailwindCSS, Typescript |
 | Deployment | Docker, Docker Compose |
 
 ---
